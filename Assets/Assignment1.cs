@@ -4,31 +4,34 @@ using UnityEngine;
 
 public class Assignment1 : ProcessingLite.GP21
 {
-    float x = 34;
-    float x2;
-    float x3;
-    float y = 12;
-    float y2;
-    float y3;
-    int maxWave = 2;
+    public Vector2 rectPosition;
+    
+    float handMovementx;
+    float handMovementy;
+    float ballMovementx;
+    float ballMovementy;
+    float realBallMovementx;
+    float realBallMovementy;
+    bool ifTrue = false;
+    bool ifMoving = false;
+    bool ballSpawned = false;
+    bool isFalling = false;
+    bool isJumping = false;
     // Start is called before the first frame update
     void Start()
     {
         StrokeWeight(1);
-       
 
-        
+
+
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-
-
-
         Background(Color.black);
-        
-        //LetterP();
+
+        LetterP02();
         LetterO();
         LetterN();
         LetterT();
@@ -36,36 +39,68 @@ public class Assignment1 : ProcessingLite.GP21
         LetterS();
         StickFigure();
         StickFigureArm();
-        LetterP02();
-        UnderLine();
-        //LetterU2();
+        BigLine();
+        Hat();
 
+        if(ballSpawned == true)
+        {
+            ball();
 
+        }
 
+        if (Input.GetKey(KeyCode.A))
+        {
+            if (ballSpawned == true)
+                realBallMovementx -= 0.2f;
+        }
+        else if (Input.GetKey(KeyCode.D))
+        {
+            if (ballSpawned == true)
+                realBallMovementx += 0.2f;
+        }
+        
+        if (Input.GetKey(KeyCode.Space))
+        {
+            if (ballSpawned == true)
+            {
 
+                isJumping = true;
+                
+            }
+        }
 
-
+        if (Input.GetKey(KeyCode.Mouse0))
+        {
+            ifMoving = true;
+            ballSpawn();
+            
+           if(handMovementx <= 0)
+            {
+                ifTrue = true;
+            } else if(handMovementx >= 2) {
+                ifTrue = false;
+            }
+           
+        } else
+        {
+            ifMoving = false;
+            ballMovementx = 0;
+            ballMovementy = 0;
+        }
 
     }
 
-    //private void LetterP()
-    //{
-        
-    //    Line(1, 6, 1, 1);
-    //    Line(1, 6, 4, 6);
-    //    Line(4, 6, 4, 3);
-    //    Line(4, 3, 1, 3);
 
-
-    //}
     void LetterP02()
     {
+        
         Circle(2.5f, 6, 2);
         Rect(1.5f, 7, 2.5f, 5);
         Line(1.5f, 7, 1.5f, 3);
         Stroke(0, 0, 0);
         Line(2.5f, 6.95f, 2.5f, 5.05f);
         Stroke(255, 255, 255);
+        
     }
 
     private void LetterO()
@@ -85,72 +120,133 @@ public class Assignment1 : ProcessingLite.GP21
     private void LetterT()
     {
         Line(11, 3, 11, 6);
-        Line(9, 5.85f, 13, 5.85f);
+        Line(9, 6, 13, 6);
     }
 
     private void LetterU()
     {
         Circle(15, 4.5f, 3);
-        Rect(16.5f, 7, 13.5f, 4.5f);
+        Rect(16.5f, 6, 13.5f, 4.5f);
         Stroke(0, 0, 0);
-        Line(13.55f, 7, 16.45f, 7);
+        Line(13.55f, 6, 16.45f, 6);
         Line(13.55f, 4.5f, 16.45f, 4.5f);
         Stroke(255, 255, 255);
     }
-    //private void LetterU2()
-    //{
-    //    Circle(8, 4.5f, 3);
-    //    Rect(9.5f, 7, 6.5f, 4.5f);
-    //    Stroke(0, 0, 0);
-    //    Line(6.55f, 7, 9.45f, 7);
-    //    Line(6.55f, 4.5f, 9.45f, 4.5f);
-    //    Stroke(255, 255, 255);
-    //}
 
     private void LetterS()
     {
-        Circle(19, 4, 2);
-        Rect(19, 3, 17, 5);
-        Circle(18, 6, 2);
-        Rect(20, 5, 18, 7);
+
+        Circle(18, 5.25f, 1.54f);
+        Rect(18, 6.02f, 19.55f, 4.48f);
+        Stroke(0, 0 ,0);
+        Line(19.55f, 6.02f, 19.55f, 4.48f);
+        Line(18, 6, 18, 4.5f);
+        Line(19.60f, 4.48f, 18.01f, 4.48f);
+        Line(19.60f, 6.02f, 18.78f, 6.02f);
+        Stroke(255, 255, 255);
+        Circle(18, 3.71f, 1.54f);
+        Rect(18, 4.48f, 16.7f, 2.94f);
         Stroke(0, 0, 0);
-        Line(17, 3.20f, 17, 4.80f);
-        Line(19, 3.20f, 19, 4.80f);
-        Line(20, 5, 20, 7);
-        Line(18, 5, 18, 7);
+        Line(18, 4.48f, 18, 2.94f);
+        Line(16.7f, 4.48f, 16.7f, 2.94f);
+        Line(17, 2.94f, 16.70f, 2.94f);
+        Line(17.80f, 4.48f, 16.70f, 4.48f);
         Stroke(255, 255, 255);
 
-
-
-        //Line(22, 1, 24, 1);
-        //Line(24, 1, 24, 3.5f);
-        //Line(24, 3.5f, 22, 3.5f);
-        //Line(22, 3.5f, 22, 6);
-        //Line(22, 6, 24, 6);
     }
 
     private void StickFigure()
     {
-        
         Line(32, 4, 30, 7);
         Line(30, 7, 28, 4);
         Line(30, 7, 30, 10);
-        Line(28, 10, 32, 10);
+        Line(27, 10, 32, 10);
         Circle(30, 13, 3);
-
-       
     }
 
-    private void UnderLine()
+    private void BigLine()
     {
         Line(1, 2.75f, 30, 2.75f);
     }
 
-    private void StickFigureArm()
+    void StickFigureArm()
     {
-        
+        if (ifMoving == true)
+        {
+            
+            if (ifTrue == true)
+            {
+                handMovementx += 0.1f;
+                
 
+
+            }
+            else if (ifTrue == false)
+            {
+                handMovementx -= 0.1f;
+                
+                
+            }
+        }
+        
         Line(32, 10, 34, 12);
+        Line(34, 12, 34 + handMovementx, 14 + handMovementy);
+    }
+
+    void ballSpawn()
+    {
+        if (ifMoving == true && ballMovementx >= -2)
+        {
+            ballMovementx -= 0.2f;
+            ballMovementy += 0.2f;
+            
+        } else if(ifMoving == true && ballMovementx <= -2)
+        {
+            ballMovementy -= 0.2f;
+
+            if(ballMovementy <= -5)
+            {
+                ballSpawned = true;
+                ballMovementx = 27;
+                ballMovementy = 27;
+            }
+        }
+
+        Circle(26 + ballMovementx, 9 + ballMovementy, 1);
+    }
+
+    void Hat()
+    {
+        Line(27, 10, 25, 8);
+        Line(25.5f, 8.5f, 27, 7);
+        Line(26.5f, 9.5f, 28, 8);
+        Line(28, 8, 27, 7);
+    }
+
+    void ball()
+    {
+        Circle(24 + realBallMovementx, 4 + realBallMovementy, 1);
+
+
+
+        if (isJumping == true && realBallMovementy < 2)
+        {
+
+            realBallMovementy += 0.1f;
+
+            if(realBallMovementy >= 2)
+            isJumping = false;
+            isFalling = true;
+
+        }
+        else if (isFalling == true && realBallMovementy > 0)
+        {
+
+                realBallMovementy -= 0.1f;
+
+        }
+           
+        
     }
     
 }
