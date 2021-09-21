@@ -7,7 +7,7 @@ public class Assignment2 : ProcessingLite.GP21
 
     float spaceBetweenLines = 0.2f;
     float x2 = 1;
-    float y1 = 30;
+    float y1 = 100;
     float ChangeValue = 3;
     
 
