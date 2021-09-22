@@ -7,11 +7,18 @@ public class Assignment5 : ProcessingLite.GP21
     PlayerCircle playercircle;
     int numberOfBalls = 10;
     Ball[] balls;
+    Ball enemyBall;
     // Start is called before the first frame update
     void Start()
     {
         playercircle = new PlayerCircle(Width / 2, Height / 2, 10, 2);
-        
+        balls = new Ball[numberOfBalls];
+        //A loop that can be used for creating multiple balls.
+        for (int i = 0; i < balls.Length; i++)
+        {
+            balls[i] = new Ball();
+        }
+
 
     }
 
@@ -25,22 +32,14 @@ public class Assignment5 : ProcessingLite.GP21
         playercircle.borderWrap();
         
         
-
-        balls = new Ball[numberOfBalls];
-
-        //A loop that can be used for creating multiple balls.
-        for (int i = 0; i < balls.Length; i++)
-        {
-            balls[i] = new Ball();
-        }
-
-
+    
 
         //Tell each ball to update it's position
         for (int i = 0; i < balls.Length; i++)
         {
             balls[i].UpdatePos();
             balls[i].Draw();
+            balls[i].borderWrap();
         }
 
     }
@@ -137,6 +136,7 @@ public class Ball : ProcessingLite.GP21
         position.y = Random.Range(0 + diameter, Height - diameter);
         velocity.x = Random.Range(-7, 7);
         velocity.y = Random.Range(-7, 7);
+        radius = diameter / 2;
 
     }
 
@@ -161,7 +161,7 @@ public class Ball : ProcessingLite.GP21
 
         if (position.x > Width - radius || position.x - radius < 0)
         {
-            velocity.y *= -1;
+            velocity.x *= -1;
         }
     }
 
