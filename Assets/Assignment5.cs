@@ -135,9 +135,9 @@ public class Ball : ProcessingLite.GP21
         diameter = Random.Range(0.5f, 1.5f);
         position.x = Random.Range(0 + diameter, Width - diameter);
         position.y = Random.Range(0 + diameter, Height - diameter);
-        velocity.x = Random.Range(0, 7) - 5;
-        velocity.y = Random.Range(0, 7) - 5;
-        
+        velocity.x = Random.Range(-7, 7);
+        velocity.y = Random.Range(-7, 7);
+
     }
 
     //Draw our ball
