@@ -4,131 +4,149 @@ using UnityEngine;
 
 public class Assignment4 : ProcessingLite.GP21
 {
-    float posX = 3;
-    float posY = 5;
-    float posX2 = 3;
-    float posY2 = 7;
-    float diameter = 2;
-    float speed = 5;
+    Vector2 circlePos;
+    Vector2 wrapPos;
     Vector2 acceleration = new Vector2(0, 0);
-    float acc = 0.1f;
-    float maxSpeed = 20;
-    bool gravityOn = false;
+
+    float diameter = 2;
+    float accIncrease = 0.2f;
+    float accDecrease = 0.025f;
+    float devRad;
+    float gravity = 9.82f;
+
+    bool gravitySwitch = false;
+    
+    
     
 
     void Start()
     {
-        float x = Width / 2; //middle of the screen
+      
+        devRad = diameter / 2;
+        circlePos = new Vector2(3, 5);
+        
     }
 
     void Update()
     {
         Background(0);
-        //Background(50, 166, 240);
+        helloWorld();
+        MovementWithAcc();
+        Gravity();
 
-        Debug.Log(acceleration.x);
+        Circle(circlePos.x, circlePos.y, diameter);
 
-        posX = posX + Input.GetAxis("Horizontal") * Time.deltaTime * speed;
-        posY = posY + Input.GetAxis("Vertical") * Time.deltaTime * speed;
-
+        circlePos.x += acceleration.x;
+        circlePos.y += acceleration.y;
         
+        
+    }
 
+    void helloWorld()
+    {
+        
+        if (circlePos.x - devRad <= 0)
+        {
+            wrapPos = new Vector2(Width + circlePos.x, circlePos.y);
+            Circle(wrapPos.x, wrapPos.y, diameter);
+        }
 
+        if (circlePos.x + devRad >= Width)
+        {
+            wrapPos = new Vector2(circlePos.x - Width, circlePos.y);
+            Circle(wrapPos.x, wrapPos.y, diameter);
+        }
+
+        if(circlePos.y - devRad <= 0)
+        {
+            wrapPos = new Vector2(circlePos.x, Height + circlePos.y);
+            Circle(wrapPos.x, wrapPos.y, diameter);
+        }
+
+        if (circlePos.y + devRad >= Height)
+        {
+            wrapPos = new Vector2(circlePos.x, circlePos.y - Height);
+            Circle(wrapPos.x, wrapPos.y, diameter);
+        }
+
+        if (circlePos.x + devRad <= 0 || circlePos.x - devRad >= Width || circlePos.y + devRad <= 0 || circlePos.y - devRad >= Height)
+        {
+            circlePos.x = wrapPos.x;
+            circlePos.y = wrapPos.y;
+        }
+    }
+
+    void MovementWithAcc()
+    {
         if (Input.GetKey(KeyCode.W))
         {
-            acceleration.y += acc * Time.deltaTime;
-            
+            acceleration.y += accIncrease * Time.deltaTime;
+
         }
 
         else if (Input.GetKey(KeyCode.S))
         {
 
-            acceleration.y -= acc * Time.deltaTime;
+            acceleration.y -= accIncrease * Time.deltaTime;
         }
 
         else if (Input.GetKey(KeyCode.A))
         {
-            acceleration.x -= acc * Time.deltaTime;
+            acceleration.x -= accIncrease * Time.deltaTime;
         }
 
         else if (Input.GetKey(KeyCode.D))
         {
-            acceleration.x += acc * Time.deltaTime;
+            acceleration.x += accIncrease * Time.deltaTime;
         }
 
         else
         {
             if (acceleration.x > 0)
             {
-                acceleration.x -= 0.2f * Time.deltaTime;
+                acceleration.x -= accDecrease * Time.deltaTime;
             }
             if (acceleration.x < 0)
             {
-                acceleration.x += 0.2f * Time.deltaTime;
+                acceleration.x += accDecrease * Time.deltaTime;
             }
             if (acceleration.y > 0)
             {
-                acceleration.y -= 0.2f * Time.deltaTime;
+                acceleration.y -= accDecrease * Time.deltaTime;
             }
-            if (acceleration.y > 0)
+            if (acceleration.y < 0)
             {
-                acceleration.y -= 0.2f * Time.deltaTime;
-            }
-        }
-
-        if(Input.GetKey(KeyCode.G))
-        {
-            
-
-            if(gravityOn == false)
-            {
-                gravityOn = true;
-            }
-            
-            else
-            {
-                gravityOn = false;
-            }
-        }
-
-        posX2 += acceleration.x;
-        posY2 += acceleration.y;
-
-
-        if(posX2 <= -2)
-        {
-            posX2 = Width;
-        }
-
-        if(posX2 >= Width +2)
-        {
-            posX2 = -2;
-        }
-
-        if(posY2 <= -2)
-        {
-            posY2 = Height;
-        }
-
-        if (posY2 >= Height + 2)
-        {
-            posY2 = -2;
-        }
-
-        if(gravityOn == true)
-        {
-            if (posY2 > 1)
-            {
-                acceleration.y -= 0.5f * Time.deltaTime;
+                acceleration.y += accDecrease * Time.deltaTime;
             }
 
             else
             {
-                acceleration.y = 0;
+                acceleration.x = 0;
+                acceleration.x = 0;
+            }
+        }
+    }
+
+    void Gravity()
+    {
+        if(Input.GetKeyDown(KeyCode.G))
+        {
+            if(gravitySwitch == false)
+            {
+                gravitySwitch = true;
+            }
+            else
+            {
+                gravitySwitch = false;
             }
         }
 
-        Circle(posX, posY, diameter);
-        Circle(posX2, posY2, diameter);
+        if(gravitySwitch == true)
+        {
+            if (circlePos.y - devRad >= 0.1f)
+            {
+                circlePos.y -= gravity * Time.deltaTime;
+            }
+        }
     }
 }
