@@ -1,59 +1,126 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Assignment5 : ProcessingLite.GP21
 {
     PlayerCircle playercircle;
-    int numberOfBalls = 10;
-    Ball[] balls;
-    Ball enemyBall;
+    public int numberOfBalls = 30;
+    int amountOfBalls = 10;
+    List<Ball> balls = new List<Ball>();
+    bool gameOver = false;
+    float timer = 5;
+    public GameObject loseText;
+    
+    
+   
+    
+    
     // Start is called before the first frame update
     void Start()
     {
+        
         playercircle = new PlayerCircle(Width / 2, Height / 2, 10, 2);
-        balls = new Ball[numberOfBalls];
+        
         //A loop that can be used for creating multiple balls.
-        for (int i = 0; i < balls.Length; i++)
+        for (int i = 0; i < amountOfBalls; i++)
         {
-            balls[i] = new Ball();
+            
+                balls.Add(new Ball());
+                
+            
         }
+
+        
 
 
     }
+
+    
 
     // Update is called once per frame
     void Update()
     {
-        
-        Background(0);
-        playercircle.Draw();
-        playercircle.PlayerMovement();
-        playercircle.borderWrap();
-        
-        
-    
+        Text myText = GameObject.Find("Canvas/BallText").GetComponent<Text>();
+        myText.text = "Amount of balls:" + balls.Count.ToString();
 
-        //Tell each ball to update it's position
-        for (int i = 0; i < balls.Length; i++)
+
+        timer -= Time.deltaTime;
+        if (gameOver == false)
         {
-            balls[i].UpdatePos();
-            balls[i].Draw();
-            balls[i].borderWrap();
+
+            Background(0);
+            playercircle.Draw();
+            playercircle.PlayerMovement();
+            playercircle.borderWrap();
+
+            if(timer <= 0)
+            {
+                balls.Add(new Ball());
+                timer = 3;
+            }
+           
+
+
+            //Tell each ball to update it's position
+            foreach(Ball ball in balls)
+            {
+                ball.UpdatePos();
+                ball.Draw();
+                ball.borderWrap();
+                
+
+            }
+
+
+            foreach (Ball ball in balls)
+            {
+
+                float distance = Vector2.Distance(ball.position, playercircle.playerPosition);
+
+                if (distance <= (ball.diameter / 2 + playercircle.diameter / 2))
+                {
+                    gameOver = true;
+                }
+
+                ball.UpdatePos();
+                ball.Draw();
+            }
+
+
         }
 
+        if (gameOver == true)
+        {
+
+            Background(0);
+            loseText.SetActive(true);
+            
+            
+        }
+
+        if(Input.GetKey(KeyCode.R))
+        {
+            balls.Clear();
+            gameOver = false;
+            loseText.SetActive(false);
+            Start();
+        }
     }
 
-    
+
 }
+
+
 
 public class PlayerCircle : ProcessingLite.GP21
 {
-    Vector2 playerPosition;
-    Vector2 wrapPos;
-    float speed;
-    float diameter;
-    float radius;
+    public Vector2 playerPosition;
+    public Vector2 wrapPos;
+    public float speed;
+    public float diameter;
+    public float radius;
     public PlayerCircle(float x, float y, float speed, float diameter)
     {
         //Set our position when we create the code.
@@ -61,6 +128,7 @@ public class PlayerCircle : ProcessingLite.GP21
         this.speed = speed;
         this.diameter = diameter;
         radius = diameter / 2;
+        
 
         //Create the velocity vector and give it a random direction.
         
@@ -69,7 +137,7 @@ public class PlayerCircle : ProcessingLite.GP21
 
     public void Draw()
     {
-        Stroke(255, 0, 0);
+        Stroke(255,255,255);
         Fill(255, 0, 0);
         Circle(playerPosition.x, playerPosition.y, diameter);
         Fill(255, 255, 255);
@@ -115,6 +183,8 @@ public class PlayerCircle : ProcessingLite.GP21
         }
 
     }
+
+    
 }
 
 //We still need to inherence from ProcessingLite
@@ -124,9 +194,9 @@ public class Ball : ProcessingLite.GP21
     public Vector2 position;
     public Vector2 velocity = new Vector2(3, 3);
     public float diameter;
-    Color color;
-    Color strokeColor;
     float radius;
+
+    
 
     //Ball Constructor, called when we type new Ball(x, y);
     public Ball()
@@ -137,13 +207,17 @@ public class Ball : ProcessingLite.GP21
         velocity.x = Random.Range(-7, 7);
         velocity.y = Random.Range(-7, 7);
         radius = diameter / 2;
+        
 
     }
 
     //Draw our ball
     public void Draw()
     {
-        Circle(position.x, position.y, diameter);
+
+            Stroke(Random.Range(0, 255), Random.Range(0, 255), Random.Range(0, 255));
+            Circle(position.x, position.y, diameter);
+
     }
 
     //Update our ball
@@ -165,7 +239,33 @@ public class Ball : ProcessingLite.GP21
         }
     }
 
+    bool CircleCollision(float x1, float y1, float size1, float x2, float y2, float size2)
+    {
+        float maxDistance = size1 + size2;
 
+        //first a quick check to see if we are too far away in x or y direction
+        //if we are far away we don't collide so just return false and be done.
+        if (Mathf.Abs(x1 - x2) > maxDistance || Mathf.Abs(y1 - y2) > maxDistance)
+        {
+            return false;
+        }
+        //we then run the slower distance calculation
+        //Distance uses Pythagoras to get exact distance, if we still are to far away we are not colliding.
+        else if (Vector2.Distance(new Vector2(x1, y1), new Vector2(x2, y2)) > maxDistance)
+        {
+            return false;
+        }
+        //We now know the points are closer then the distance so we are colliding!
+        else
+        {
+            return true;
+        }
+    }
+
+    //A better way to do this is to have a circle object and pass the objects in to the function,
+    //then we just have to pass 2 objects instead of 6 different values.
 }
+
+
 
 
