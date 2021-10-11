@@ -1,6 +1,6 @@
 using UnityEngine;
 
-class Pontor : IRandomWalker
+class Assignment6 : IRandomWalker
 {
 	public Vector2 player = new Vector2();
 	public int realPlayAreaWidth;
